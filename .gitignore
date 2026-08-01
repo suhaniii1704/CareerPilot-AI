@@ -2,7 +2,7 @@ myenv/
 .env
 __pycache__/
 *.pyc
-.pdf
+*.pdf
 
 uploads/*
 !uploads/.gitkeep

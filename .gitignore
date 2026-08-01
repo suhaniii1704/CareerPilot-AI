@@ -1,0 +1,14 @@
+myenv/
+.env
+__pycache__/
+*.pyc
+.pdf
+
+uploads/*
+!uploads/.gitkeep
+
+.vscode/
+
+vector_db/
+
+.idea/

@@ -17,9 +17,7 @@ CareerPilot AI is an AI-powered career guidance platform that helps students imp
 
 - Python
 - Streamlit
-- Grok API
+- Google Gemini API
 - LangChain
 - FAISS
 - CrewAI
-- Whisper
-- Edge TTS

@@ -31,3 +31,5 @@ def create_vector_store(resume_text):
     )
 
     return vector_store
+
+

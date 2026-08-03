@@ -351,7 +351,6 @@ elif menu == "📄 Resume Analysis":
                 missing_html,
                 unsafe_allow_html=True
             )
-
             
 
             if "suggestions" in resume_data:

@@ -4,9 +4,13 @@ from google.genai.types import GenerateContentConfig
 
 from utils.config import client, MODEL_NAME
 from utils.prompts import RESUME_ANALYSIS_PROMPT
+import time
 
 
 def parse_resume_ai(resume_text,target_role):
+
+    
+
 
     print("=== GEMINI PARSER RUNNING ===")
     print(RESUME_ANALYSIS_PROMPT)
@@ -19,7 +23,7 @@ def parse_resume_ai(resume_text,target_role):
     "<RESUME_TEXT>",
     resume_text)
 
-    
+    start=time.time()
 
     response = client.models.generate_content(
         model=MODEL_NAME,
@@ -30,6 +34,9 @@ def parse_resume_ai(resume_text,target_role):
         )
     )
 
+    end=time.time()
+    print(f"Gemini Resume Analysis Time: {end-start:.2f} seconds")
+ 
     try:
         return json.loads(response.text)
 

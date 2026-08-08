@@ -12,3 +12,5 @@ uploads/*
 vector_db/
 
 .idea/
+
+careerpilot.db

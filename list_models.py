@@ -1,7 +1,10 @@
-from utils.config import client
+import google.generativeai as genai
+from utils.config import API_KEY
 
-models = client.models.list()
+genai.configure(api_key=API_KEY)
 
-for model in models:
-    if "embed" in model.name.lower():
+print("Available Gemini models:\n")
+
+for model in genai.list_models():
+    if "generateContent" in model.supported_generation_methods:
         print(model.name)

@@ -10,6 +10,9 @@ from utils.chat import chat_with_resume
 
 from utils.pdf_report import generate_report
 
+from utils.database import ( init_db, create_user, authenticate_user, save_analysis, get_user_analyses )
+
+from utils.interview_coach import (start_interview,next_interview_question,evaluate_interview)
 
 BASE_DIR = Path(__file__).parent
 UPLOAD_DIR = BASE_DIR / "uploads"
@@ -24,6 +27,11 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+#-------------------
+#Initialize Database
+#-------------------
+init_db()
 
 st.markdown("""
 <style>
@@ -58,9 +66,105 @@ if "uploaded_file_name" not in st.session_state:
 if "target_role" not in st.session_state:
     st.session_state.target_role = ""
 
+if "interview_questions" not in st.session_state:
+    st.session_state.interview_questions = None
+
+if "interview_feedback" not in st.session_state:
+    st.session_state.interview_feedback = {}
+
+if "interview_active" not in st.session_state:
+    st.session_state.interview_active = False
+
+if "interview_history" not in st.session_state:
+    st.session_state.interview_history = []
+
+if "current_question" not in st.session_state:
+    st.session_state.current_question = None
+
+#Login session state
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False 
+
+if "user_id" not in st.session_state:
+    st.session_state.user_id = None
+
+if "user_name" not in st.session_state:
+    st.session_state.user_name = ""
+
+# ===================================================
+# AUTHENTICATION
+# ===================================================
+
+if not st.session_state.logged_in:
+
+    st.title("🔐 CareerPilot AI")
+    st.subheader("Login or Create an Account")
+
+    tab1, tab2 = st.tabs(["Login", "Sign Up"])
+
+    # ---------------- LOGIN ----------------
+
+    with tab1:
+
+        login_email = st.text_input("Email", key="login_email")
+        login_password = st.text_input(
+            "Password",
+            type="password",
+            key="login_password"
+        )
+
+        if st.button("Login", use_container_width=True):
+
+            user = authenticate_user(login_email, login_password)
+
+            if user:
+
+                st.session_state.logged_in = True
+                st.session_state.user_id = user[0]
+                st.session_state.user_name = user[1]
+
+                st.rerun()
+
+            else:
+                st.error("Invalid email or password")
+
+    # ---------------- SIGN UP ----------------
+
+    with tab2:
+
+        signup_name = st.text_input("Full Name", key="signup_name")
+        signup_email = st.text_input("Email Address", key="signup_email")
+        signup_password = st.text_input(
+            "Password",
+            type="password",
+            key="signup_password"
+        )
+
+        if st.button("Create Account", use_container_width=True):
+
+            success = create_user(
+                signup_name,
+                signup_email,
+                signup_password
+            )
+
+            if success:
+                st.success("Account created successfully! Please login.")
+            else:
+                st.error("Email already exists.")
+
+    st.stop()
+
+
 # -----------------------------
 # Sidebar
 # -----------------------------
+
+
+st.sidebar.markdown(f"### 👋 {st.session_state.user_name}")
+
+st.sidebar.divider()
+
 st.sidebar.markdown(
     """
     <h1 style='font-size:38px; margin-bottom:0;'>
@@ -99,17 +203,226 @@ if st.sidebar.button("📊 Job Match", use_container_width=True):
 if st.sidebar.button("🧭 Career Advisor", use_container_width=True):
     st.session_state.page = "🧭 Career Advisor"
 
+
+
+
+if st.sidebar.button("🚪 Logout", use_container_width=True):
+
+    st.session_state.logged_in = False
+    st.session_state.user_id = None
+    st.session_state.user_name = ""
+
+    st.rerun()
+
 menu = st.session_state.page
 
 # ===================================================
-# HOME PAGE
+# HOME PAGE - AI CAREER DASHBOARD
 # ===================================================
+
 if menu == "🏠 Home":
 
     st.title("🚀 CareerPilot AI")
     st.subheader("Your Personalized AI Career Coach")
 
-    st.write("""
+    # ===================================================
+    # IF RESUME HAS BEEN ANALYZED
+    # ===================================================
+
+    if st.session_state.resume_data is not None:
+
+        resume_data = st.session_state.resume_data
+        target_role = st.session_state.target_role
+
+        ats = resume_data["ats_score"]
+        missing = len(resume_data["missing_skills"])
+
+        # Resume Grade
+        if ats >= 90:
+            grade = "A+"
+        elif ats >= 80:
+            grade = "A"
+        elif ats >= 70:
+            grade = "B+"
+        elif ats >= 60:
+            grade = "B"
+        else:
+            grade = "C"
+
+        # Role Match
+        role_match = min(100, ats + 5)
+
+        # Career Readiness
+        career_readiness = min(100, ats - missing * 3 + 10)
+
+        st.divider()
+
+        st.markdown("## 📊 AI Career Dashboard")
+
+        c1, c2, c3, c4 = st.columns(4)
+
+        with c1:
+            st.metric("⭐ ATS Score", f"{ats}/100")
+
+        with c2:
+            st.metric("🏆 Grade", grade)
+
+        with c3:
+            st.metric("🎯 Role Match", f"{role_match}%")
+
+        with c4:
+            st.metric("⚠ Missing Skills", missing)
+
+        st.divider()
+
+        left, right = st.columns(2)
+
+        # ===================================================
+        # LEFT COLUMN - STRENGTHS
+        # ===================================================
+
+        with left:
+
+            st.markdown("### 💪 Resume Strengths")
+
+            strengths = []
+
+            if len(resume_data["projects"]) >= 2:
+                strengths.append("Strong project portfolio")
+
+            if len(resume_data["certifications"]) >= 3:
+                strengths.append("Excellent certifications")
+
+            if "Python" in resume_data["skills"]:
+                strengths.append("Strong Python skills")
+
+            if "Machine Learning" in resume_data["skills"]:
+                strengths.append("Machine Learning exposure")
+
+            if not strengths:
+                strengths.append("Resume uploaded successfully")
+
+            for s in strengths:
+                st.success(f"✔ {s}")
+
+        # ===================================================
+        # RIGHT COLUMN - IMPROVEMENTS
+        # ===================================================
+
+        with right:
+
+            st.markdown("### ⚠ Areas to Improve")
+
+            improvements = resume_data["missing_skills"][:4]
+
+            if not improvements:
+                improvements = [
+                    "Add quantified achievements",
+                    "Improve project descriptions"
+                ]
+
+            for i in improvements:
+                st.warning(f"• {i}")
+
+        st.divider()
+
+        # ===================================================
+        # RECOMMENDED ROLES
+        # ===================================================
+
+        st.markdown("### 🎯 Recommended Roles")
+
+        role_cols = st.columns(4)
+
+        recommended = [
+            target_role or "Data Analyst",
+            "Business Analyst",
+            "ML Intern",
+            "AI Engineer Intern"
+        ]
+
+        for col, role in zip(role_cols, recommended):
+            with col:
+                st.info(role)
+
+        st.divider()
+
+        # ===================================================
+        # NEXT SKILLS
+        # ===================================================
+
+        st.markdown("### 📚 Recommended Next Skills")
+
+        next_skills = (
+            resume_data["missing_skills"][:5]
+            if resume_data["missing_skills"]
+            else ["Tableau", "Docker", "Azure"]
+        )
+
+        skill_cols = st.columns(len(next_skills))
+
+        for col, skill in zip(skill_cols, next_skills):
+            with col:
+                st.markdown(
+                    f"""
+                    <div style='background:#1E293B;padding:15px;border-radius:12px;text-align:center;border:1px solid #334155;'>
+                        <b>{skill}</b>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+        st.divider()
+
+        # ===================================================
+        # CAREER READINESS
+        # ===================================================
+
+        st.markdown("### 📈 Career Readiness")
+
+        st.progress(career_readiness / 100)
+        st.caption(f"Overall placement readiness: {career_readiness}%")
+
+        st.divider()
+
+        # ===================================================
+        # RESUME HISTORY
+        # ===================================================
+
+        st.markdown("### 🕒 Resume History")
+
+        history = get_user_analyses(st.session_state.user_id)
+
+        if history:
+
+            import pandas as pd
+        
+            history_df = pd.DataFrame(
+            history,
+            columns=["Target Role", "ATS Score", "Date"]
+            )
+
+            history_df["Date"] = pd.to_datetime(
+            history_df["Date"]
+            ).dt.strftime("%d %b %Y %I:%M %p")
+            st.dataframe(
+                history_df,
+               use_container_width=True,
+              hide_index=True)
+        else:
+            st.info("No previous analyses found.")
+            st.divider()
+            st.success(
+    "🎉 Resume analyzed successfully. Continue with Resume Chat, Interview Coach, or Job Match for deeper preparation."
+)
+
+    # ===================================================
+    # BEFORE RESUME ANALYSIS
+    # ===================================================
+
+    else:
+
+        st.write("""
 Welcome to **CareerPilot AI**.
 
 This platform helps students prepare for placements through personalized AI guidance.
@@ -125,9 +438,8 @@ This platform helps students prepare for placements through personalized AI guid
 **Let's build your career together! 🚀**
 """)
 
-# ===================================================
-# RESUME ANALYSIS
-#====================================================
+        st.info("📄 Upload and analyze your resume to unlock the AI Career Dashboard.")
+
 
 # ===================================================
 # RESUME ANALYSIS
@@ -197,6 +509,13 @@ elif menu == "📄 Resume Analysis":
                 st.session_state.resume_data = resume_data
                 st.session_state.resume_uploaded = True
                 st.session_state.target_role = target_role
+
+                # Save analysis to database
+                save_analysis(
+                    st.session_state.user_id,
+                    target_role,
+                    resume_data
+                    )
 
                 
             st.success("✅ Analysis Complete!")
@@ -495,13 +814,176 @@ elif menu == "💬 Resume Chat":
             )
 
             st.rerun()
+
+
 # ===================================================
 # INTERVIEW COACH
 # ===================================================
+
+# ===================================================
+# CHAT-STYLE INTERVIEW COACH
+# ===================================================
+
 elif menu == "🎯 Interview Coach":
 
-    st.title("🎯 Interview Coach")
-    st.info("Interview Coach module coming soon...")
+    st.title("🎯 Live AI Interview")
+    st.write("Chat with an AI interviewer. Continue as long as you want and end the interview anytime.")
+
+    if st.session_state.resume_data is None:
+
+        st.warning("⚠ Please analyze your resume first.")
+
+    else:
+
+        target_role = st.session_state.target_role
+
+        st.info(f"🎯 Interview for: {target_role}")
+
+        if st.button("Reset Interview "):
+
+            st.session_state.interview_active = False
+            st.session_state.interview_history = []
+            st.session_state.current_question = None
+            st.session_state.interview_feedback = {}
+
+            st.rerun()
+
+        # Start interview
+        if not st.session_state.interview_active:
+
+            if st.button("🚀 Start Interview", use_container_width=True):
+
+                with st.spinner("Starting interview..."):
+
+                    first_q = start_interview(
+                        st.session_state.resume_data,
+                        target_role
+                    )
+
+                    st.session_state.interview_active = True
+                    st.session_state.interview_history = []
+                    st.session_state.current_question = first_q
+
+                    st.rerun()
+
+        else:
+
+            # Display chat history
+            for item in st.session_state.interview_history:
+
+                with st.chat_message("assistant"):
+                    st.write(item["question"])
+
+                with st.chat_message("user"):
+                    st.write(item["answer"])
+
+            # Current question
+            with st.chat_message("assistant"):
+                question = st.session_state.current_question
+
+                if isinstance(question, list):
+                    clean = ""
+
+                    for part in question:
+                        if isinstance(part, dict) and "text" in part:
+                            clean += part["text"]
+
+                        elif hasattr(part, "text"):
+                            clean += part.text
+
+                        else:
+                           clean += str(part)
+
+                    question = clean
+
+                st.markdown(question)
+
+            # User answer
+            answer = st.chat_input("Type your answer...")
+
+            if answer:
+
+                # Clean the current question before saving to history
+                q = st.session_state.current_question
+                if isinstance(q, list):
+                    clean = ""
+
+                    for part in q:
+
+                          if isinstance(part, dict) and "text" in part:
+                                 clean += part["text"]
+
+                          elif hasattr(part, "text"):
+                                 clean += part.text
+
+                          else:
+                                 clean += str(part)
+
+                    q = clean.strip()
+                st.session_state.interview_history.append({
+                    "question": q,
+                    "answer": answer
+                    })
+
+
+                with st.spinner("Thinking of the next question..."):
+
+                    next_q = next_interview_question(
+                        st.session_state.interview_history,
+                        target_role
+                    )
+
+                    st.session_state.current_question = next_q
+
+                st.rerun()
+
+            st.divider()
+
+            col1, col2 = st.columns(2)
+
+            with col1:
+
+                st.metric(
+                    "Questions Asked",
+                    len(st.session_state.interview_history)
+                )
+
+            with col2:
+
+                if st.button("🛑 End Interview", use_container_width=True):
+
+                    with st.spinner("Evaluating your interview..."):
+
+                        result = evaluate_interview(
+                            st.session_state.interview_history,
+                            target_role
+                        )
+
+                    st.session_state.interview_active = False
+                    st.session_state.current_question = None
+
+                    st.subheader("📊 Interview Report")
+
+                    st.markdown(
+                        f"""
+                        <div style="
+                            background-color:#111827;
+                            padding:20px;
+                            border-radius:12px;
+                            border:1px solid #374151;
+                        ">
+                            <pre style="
+                                color:white;
+                                white-space:pre-wrap;
+                                font-family:inherit;
+                                margin:0;
+                            ">{result}</pre>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                    st.success("🎉 Interview completed!")
 
 # ===================================================
 # JOB MATCH

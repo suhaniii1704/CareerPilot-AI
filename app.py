@@ -2,7 +2,7 @@ import streamlit as st
 
 from utils.database import ( init_db, create_user, authenticate_user)
 
-from modules import home,resume_analysis, interview_coach,resume_chat
+from modules import home,resume_analysis, interview_coach,resume_chat,job_match
 
 # -----------------------------
 # Page Configuration
@@ -63,6 +63,13 @@ if "interview_final_report" not in st.session_state:
 
 if "current_question" not in st.session_state:
     st.session_state.current_question = None
+
+if "job_match_result" not in st.session_state: 
+    st.session_state.job_match_result = None 
+
+if "job_match_score" not in st.session_state: 
+    st.session_state.job_match_score = None
+
 
 #Login session state
 if "logged_in" not in st.session_state:
@@ -241,9 +248,7 @@ elif menu == "🎯 Interview Coach":
 # JOB MATCH
 # ===================================================
 elif menu == "📊 Job Match":
-
-    st.title("📊 Job Match")
-    st.info("Job Match module coming soon...")
+    job_match.show()
 
 # ===================================================
 # CAREER ADVISOR

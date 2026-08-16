@@ -16,5 +16,3 @@ reportlab
 
 python-dotenv
 
-faster-whisper
-edge-tts

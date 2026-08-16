@@ -15,3 +15,6 @@ python-docx
 reportlab
 
 python-dotenv
+
+faster-whisper
+edge-tts

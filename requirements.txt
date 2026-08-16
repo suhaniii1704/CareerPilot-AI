@@ -1,0 +1,17 @@
+streamlit
+pandas
+
+google-genai
+langchain
+langchain-core
+langchain-community
+langchain-google-genai
+langchain-text-splitters
+
+faiss-cpu
+
+PyMuPDF
+python-docx
+reportlab
+
+python-dotenv

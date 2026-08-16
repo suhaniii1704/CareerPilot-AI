@@ -118,7 +118,7 @@ Reports use a clean card-based layout for easier reading and presentation.
 
 ## 🏗️ Application Workflow
 
-`
+```text
                     ┌──────────────────┐
                     │      Resume      │
                     │      Upload      │

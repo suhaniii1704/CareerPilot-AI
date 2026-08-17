@@ -168,36 +168,7 @@ def show():
    
            st.divider()
    
-           # ===================================================
-           # RESUME HISTORY
-           # ===================================================
-   
-           st.markdown("### 🕒 Resume History")
-   
-           history = get_user_analyses(st.session_state.user_id)
-   
-           if history:
-   
-               import pandas as pd
            
-               history_df = pd.DataFrame(
-               history,
-               columns=["Target Role", "ATS Score", "Date"]
-               )
-   
-               history_df["Date"] = pd.to_datetime(
-               history_df["Date"]
-               ).dt.strftime("%d %b %Y %I:%M %p")
-               st.dataframe(
-                   history_df,
-                  use_container_width=True,
-                 hide_index=True)
-           else:
-               st.info("No previous analyses found.")
-               st.divider()
-               st.success(
-       "🎉 Resume analyzed successfully. Continue with Resume Chat, Interview Coach, or Job Match for deeper preparation."
-   )
    
        # ===================================================
        # BEFORE RESUME ANALYSIS

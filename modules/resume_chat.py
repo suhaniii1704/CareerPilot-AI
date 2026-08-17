@@ -187,70 +187,7 @@ def show():
                 message["content"]
             )
 
-    # =====================================================
-    # SUGGESTED QUESTIONS
-    # =====================================================
-
-    st.markdown(
-        "### 💡 Suggested Questions"
-    )
-
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-
-        if st.button(
-            "📄 Summarize Resume"
-        ):
-
-            st.session_state.quick_prompt = (
-                "Summarize my resume."
-            )
-
-        if st.button(
-            "🛠️ Technical Skills"
-        ):
-
-            st.session_state.quick_prompt = (
-                "What are my technical skills?"
-            )
-
-    with col2:
-
-        if st.button(
-            "💼 Suitable Job Roles"
-        ):
-
-            st.session_state.quick_prompt = (
-                "What jobs can I apply for?"
-            )
-
-        if st.button(
-            "🚀 Best Project"
-        ):
-
-            st.session_state.quick_prompt = (
-                "Which is my strongest project?"
-            )
-
-    with col3:
-
-        if st.button(
-            "📚 Learn Next"
-        ):
-
-            st.session_state.quick_prompt = (
-                "What should I learn next?"
-            )
-
-        if st.button(
-            "🎤 Interview Questions"
-        ):
-
-            st.session_state.quick_prompt = (
-                "Ask me interview questions based on my resume."
-            )
-
+   
     # =====================================================
     # CHAT INPUT WITH MICROPHONE
     # =====================================================

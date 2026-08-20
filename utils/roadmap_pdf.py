@@ -578,7 +578,7 @@ def add_page_header_footer(
     canvas.drawString(
         20 * mm,
         10 * mm,
-        "🚀 CareerPilot AI"
+        "CareerPilot AI"
     )
 
     canvas.drawRightString(
@@ -633,7 +633,7 @@ def generate_roadmap_pdf(
     header_data = [
         [
             Paragraph(
-                "🚀 CareerPilot AI",
+                "CareerPilot AI",
                 styles["title"]
             )
         ],

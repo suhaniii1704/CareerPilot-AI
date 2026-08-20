@@ -24,7 +24,7 @@ Job Description:
 
 Return the response in this exact format:
 
-MATCH SCORE: number 
+MATCH SCORE: number/100
 
 MISSING KEYWORDS:
 - keyword 1

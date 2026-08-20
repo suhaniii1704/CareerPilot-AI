@@ -352,7 +352,7 @@ def generate_report(
         [
             [
                 Paragraph(
-                    "🚀 CareerPilot AI",
+                    "CareerPilot AI",
                     styles["title"]
                 )
             ],

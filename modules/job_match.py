@@ -58,14 +58,21 @@ def show():
                     part.get("text", "") for part in result
                 )
 
-            # Extract score
-            score = "0"
+                # Extract score
+                score = "0"
+                for line in result.split("\n"):
+                    if line.strip().startswith("MATCH SCORE:"):
+                        score_text = line.replace("MATCH SCORE:", "").strip()
+                         # Extract only the numeric score
+                        import re
+                        match = re.search(r"\d{1,3}", score_text)
 
-            for line in result.split("\n"):
+                        if match:
+                            score = match.group(0)
 
-                if line.startswith("MATCH SCORE:"):
-                    score = line.replace("MATCH SCORE:", "").strip()
-                    break
+                        break
+
+           
 
             # Save in session
             st.session_state.job_match_result = result

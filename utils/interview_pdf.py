@@ -362,7 +362,7 @@ def generate_interview_pdf(
         [
             [
                 Paragraph(
-                    "🚀 CareerPilot AI",
+                    "CareerPilot AI",
                     styles["title"]
                 )
             ],

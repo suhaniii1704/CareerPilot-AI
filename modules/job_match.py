@@ -1,7 +1,9 @@
 import streamlit as st
 
+
 from utils.job_match import analyze_job_match
 from utils.job_match_pdf import generate_job_match_pdf
+from utils.database import save_job_match
 
 
 def show():
@@ -78,6 +80,15 @@ def show():
             st.session_state.job_match_result = result
             st.session_state.job_match_jd = st.session_state.job_match_jd_input
             st.session_state.job_match_score = score
+
+            # Save in history database
+            save_job_match(
+                st.session_state.user_id,
+                target_role,
+                jd,
+                score,
+                result
+                )
 
             st.rerun()
 

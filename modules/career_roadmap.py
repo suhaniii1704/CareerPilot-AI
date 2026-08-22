@@ -5,7 +5,7 @@ import streamlit as st
 
 from utils.roadmap import generate_roadmap
 from utils.roadmap_pdf import generate_roadmap_pdf
-
+from utils.database import save_roadmap
 
 # =========================================================
 # TEXT CLEANING
@@ -473,6 +473,14 @@ def show():
             st.session_state.roadmap_duration = (
                 duration
             )
+
+            # Save roadmap in history database
+            save_roadmap(st.session_state.user_id,
+                         target_role,
+                         level,
+                         duration,
+                         roadmap)
+
 
             st.rerun()
 

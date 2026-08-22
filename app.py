@@ -2,7 +2,7 @@ import streamlit as st
 
 from utils.database import ( init_db, create_user, authenticate_user)
 
-from modules import home,resume_analysis, interview_coach,resume_chat,job_match,career_roadmap
+from modules import home,resume_analysis, interview_coach,resume_chat,job_match,career_roadmap,history
 
 # -----------------------------
 # Page Configuration
@@ -193,6 +193,9 @@ if st.sidebar.button("📊 Job Match", use_container_width=True):
 if st.sidebar.button("🧠 Career Roadmap",use_container_width=True):
     st.session_state.page = "🧠 Career Roadmap"
 
+if st.sidebar.button("🕘 My History", use_container_width=True):
+    st.session_state.page = "🕘 My History"
+
 
 
 
@@ -256,3 +259,10 @@ elif menu == "📊 Job Match":
 elif menu == "🧠 Career Roadmap":
 
     career_roadmap.show()
+
+# ===================================================
+# MY HISTORY
+# ===================================================
+elif menu == "🕘 My History":
+
+    history.show_history()

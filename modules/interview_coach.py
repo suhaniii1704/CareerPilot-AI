@@ -13,6 +13,7 @@ from utils.interview_coach import (
 from utils.interview_pdf import generate_interview_pdf
 
 from utils.config import API_KEY, MODEL_NAME
+from utils.database import save_interview
 
 
 # =========================================================
@@ -425,6 +426,15 @@ def show():
                         )
 
                     st.session_state.interview_final_report = result
+
+                    # Save completed interview in history database
+                    save_interview(
+                        st.session_state.user_id,
+                        target_role,
+                        st.session_state.interview_history,
+                        result
+                        )
+
 
                     st.session_state.interview_active = False
 

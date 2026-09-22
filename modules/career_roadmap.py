@@ -433,9 +433,9 @@ def show():
         use_container_width=True
     ):
 
-     if not target_role.strip():
-        st.warning("⚠️ Please enter a target role.")
-        st.stop()
+        if not target_role.strip():
+           st.warning("⚠️ Please enter a target role.")
+           st.stop()
 
         with st.spinner(
             f"Creating your {duration} personalized roadmap..."

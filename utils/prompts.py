@@ -65,6 +65,9 @@ Return exactly this JSON:
   "missing_skills": [],
 
   "suggestions": []
+
+  "recommended_roles": []
+  
 }
 
 Resume:

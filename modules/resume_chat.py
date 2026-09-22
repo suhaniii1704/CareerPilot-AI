@@ -8,18 +8,14 @@ from utils.chat import chat_with_resume
 from utils.config import API_KEY, MODEL_NAME
 
 
-# =========================================================
 # GEMINI CLIENT FOR VOICE TRANSCRIPTION
-# =========================================================
 
 voice_client = genai.Client(
     api_key=API_KEY
 )
 
 
-# =========================================================
 # VOICE → TEXT
-# =========================================================
 
 def transcribe_audio(audio_file):
 
@@ -40,9 +36,7 @@ def transcribe_audio(audio_file):
         if not audio_bytes:
             return None
 
-        # -------------------------------------------------
         # Save temporary audio
-        # -------------------------------------------------
 
         with tempfile.NamedTemporaryFile(
             delete=False,
@@ -52,17 +46,13 @@ def transcribe_audio(audio_file):
             temp_file.write(audio_bytes)
             temp_path = temp_file.name
 
-        # -------------------------------------------------
         # Upload audio to Gemini
-        # -------------------------------------------------
 
         uploaded_audio = voice_client.files.upload(
             file=temp_path
         )
 
-        # -------------------------------------------------
         # Transcribe
-        # -------------------------------------------------
 
         response = voice_client.models.generate_content(
             model=MODEL_NAME,
@@ -102,9 +92,7 @@ Preserve the user's original meaning.
 
     finally:
 
-        # -------------------------------------------------
         # Remove temporary file
-        # -------------------------------------------------
 
         if temp_path and os.path.exists(temp_path):
 
@@ -115,17 +103,13 @@ Preserve the user's original meaning.
                 pass
 
 
-# =========================================================
 # MAIN PAGE
-# =========================================================
 
 def show():
 
     st.title("💬 Resume Chat")
 
-    # =====================================================
     # CHECK VECTOR STORE
-    # =====================================================
 
     if st.session_state.vector_store is None:
 
@@ -135,9 +119,7 @@ def show():
 
         return
 
-    # =====================================================
     # INITIALIZE CHAT HISTORY
-    # =====================================================
 
     if "messages" not in st.session_state:
 
@@ -150,9 +132,7 @@ def show():
             }
         ]
 
-    # =====================================================
     # CLEAR CHAT
-    # =====================================================
 
     col1, col2 = st.columns([5, 1])
 
@@ -173,9 +153,7 @@ def show():
 
             st.rerun()
 
-    # =====================================================
     # DISPLAY CHAT HISTORY
-    # =====================================================
 
     for message in st.session_state.messages:
 
@@ -188,9 +166,7 @@ def show():
             )
 
    
-    # =====================================================
     # CHAT INPUT WITH MICROPHONE
-    # =====================================================
 
     user_response = st.chat_input(
         "Ask about your resume...",
@@ -199,9 +175,7 @@ def show():
         audio_sample_rate=16000
     )
 
-    # =====================================================
     # QUICK PROMPT
-    # =====================================================
 
     if "quick_prompt" in st.session_state:
 
@@ -213,15 +187,11 @@ def show():
 
         prompt = None
 
-    # =====================================================
     # PROCESS CHAT INPUT
-    # =====================================================
 
     if user_response:
 
-        # -------------------------------------------------
         # TEXT INPUT
-        # -------------------------------------------------
 
         if user_response.text:
 
@@ -229,9 +199,7 @@ def show():
                 user_response.text.strip()
             )
 
-        # -------------------------------------------------
         # VOICE INPUT
-        # -------------------------------------------------
 
         elif user_response.audio:
 
@@ -258,15 +226,11 @@ def show():
 
                 return
 
-        # -------------------------------------------------
         # PROCESS PROMPT
-        # -------------------------------------------------
 
         if prompt:
 
-            # ---------------------------------------------
             # ADD USER MESSAGE
-            # ---------------------------------------------
 
             st.session_state.messages.append(
                 {
@@ -283,9 +247,7 @@ def show():
                     prompt
                 )
 
-            # ---------------------------------------------
             # GET AI RESPONSE
-            # ---------------------------------------------
 
             with st.chat_message(
                 "assistant"
@@ -304,9 +266,7 @@ def show():
                     answer
                 )
 
-            # ---------------------------------------------
             # SAVE AI RESPONSE
-            # ---------------------------------------------
 
             st.session_state.messages.append(
                 {

@@ -16,18 +16,14 @@ from utils.config import API_KEY, MODEL_NAME
 from utils.database import save_interview
 
 
-# =========================================================
 # GEMINI CLIENT FOR VOICE TRANSCRIPTION
-# =========================================================
 
 voice_client = genai.Client(
     api_key=API_KEY
 )
 
 
-# =========================================================
 # HELPER: CLEAN GEMINI QUESTION
-# =========================================================
 
 def clean_question(question):
 
@@ -51,9 +47,7 @@ def clean_question(question):
     return str(question).strip()
 
 
-# =========================================================
 # VOICE → TEXT
-# =========================================================
 
 def transcribe_audio(audio_file):
 
@@ -73,9 +67,7 @@ def transcribe_audio(audio_file):
         if not audio_bytes:
             return None
 
-        # -------------------------------------------------
         # Save audio temporarily
-        # -------------------------------------------------
 
         with tempfile.NamedTemporaryFile(
             delete=False,
@@ -85,17 +77,13 @@ def transcribe_audio(audio_file):
             temp_file.write(audio_bytes)
             temp_path = temp_file.name
 
-        # -------------------------------------------------
         # Upload audio to Gemini
-        # -------------------------------------------------
 
         uploaded_audio = voice_client.files.upload(
             file=temp_path
         )
 
-        # -------------------------------------------------
         # Transcription prompt
-        # -------------------------------------------------
 
         response = voice_client.models.generate_content(
             model=MODEL_NAME,
@@ -135,9 +123,7 @@ Preserve the candidate's original meaning.
 
     finally:
 
-        # -------------------------------------------------
         # Remove temporary file
-        # -------------------------------------------------
 
         if temp_path and os.path.exists(temp_path):
 
@@ -148,9 +134,7 @@ Preserve the candidate's original meaning.
                 pass
 
 
-# =========================================================
 # MAIN INTERVIEW PAGE
-# =========================================================
 
 def show():
 
@@ -161,9 +145,7 @@ def show():
         "Continue as long as you want and end the interview anytime."
     )
 
-    # =====================================================
     # CHECK RESUME
-    # =====================================================
 
     if st.session_state.resume_data is None:
 
@@ -179,9 +161,7 @@ def show():
         f"🎯 Interview for: {target_role}"
     )
 
-    # =====================================================
     # INITIALIZE SESSION STATE
-    # =====================================================
 
     if "interview_active" not in st.session_state:
         st.session_state.interview_active = False
@@ -195,9 +175,7 @@ def show():
     if "interview_final_report" not in st.session_state:
         st.session_state.interview_final_report = None
 
-    # =====================================================
     # RESET INTERVIEW
-    # =====================================================
 
     if st.button(
         "🔄 Reset Interview",
@@ -214,9 +192,7 @@ def show():
 
         st.rerun()
 
-    # =====================================================
     # START INTERVIEW
-    # =====================================================
 
     if st.button(
         "🚀 Start Interview",
@@ -244,15 +220,11 @@ def show():
 
             st.rerun()
 
-    # =====================================================
     # ACTIVE INTERVIEW
-    # =====================================================
 
     if st.session_state.interview_active:
 
-        # -------------------------------------------------
         # DISPLAY PREVIOUS QUESTIONS / ANSWERS
-        # -------------------------------------------------
 
         for item in st.session_state.interview_history:
 
@@ -268,9 +240,7 @@ def show():
                     item["answer"]
                 )
 
-        # -------------------------------------------------
         # DISPLAY CURRENT QUESTION
-        # -------------------------------------------------
 
         question = clean_question(
             st.session_state.current_question
@@ -284,9 +254,7 @@ def show():
 
         st.divider()
 
-        # =================================================
         # COMBINED TEXT + VOICE CHAT INPUT
-        # =================================================
 
         user_response = st.chat_input(
             "Type your answer or record your voice...",
@@ -295,25 +263,19 @@ def show():
             audio_sample_rate=16000
         )
 
-        # =================================================
         # PROCESS USER RESPONSE
-        # =================================================
 
         if user_response:
 
             answer = None
 
-            # -------------------------------------------------
             # TEXT ANSWER
-            # -------------------------------------------------
 
             if user_response.text:
 
                 answer = user_response.text.strip()
 
-            # -------------------------------------------------
             # VOICE ANSWER
-            # -------------------------------------------------
 
             elif user_response.audio:
 
@@ -338,15 +300,11 @@ def show():
 
                         st.write(answer)
 
-            # -------------------------------------------------
             # VALID ANSWER
-            # -------------------------------------------------
 
             if answer:
 
-                # ---------------------------------------------
                 # SAVE ANSWER
-                # ---------------------------------------------
 
                 st.session_state.interview_history.append(
                     {
@@ -355,9 +313,7 @@ def show():
                     }
                 )
 
-                # ---------------------------------------------
                 # GENERATE NEXT QUESTION
-                # ---------------------------------------------
 
                 with st.spinner(
                     "🤖 Thinking of the next question..."
@@ -379,9 +335,7 @@ def show():
                     "Please type an answer or record your voice."
                 )
 
-        # =================================================
         # INTERVIEW STATISTICS
-        # =================================================
 
         st.divider()
 
@@ -396,9 +350,7 @@ def show():
                 )
             )
 
-        # =================================================
         # END INTERVIEW
-        # =================================================
 
         with col2:
 
@@ -442,9 +394,7 @@ def show():
 
                     st.rerun()
 
-    # =====================================================
     # FINAL INTERVIEW REPORT
-    # =====================================================
 
     if (
         not st.session_state.interview_active
@@ -459,9 +409,7 @@ def show():
             st.session_state.interview_final_report
         )
 
-        # -------------------------------------------------
         # REPORT DISPLAY
-        # -------------------------------------------------
 
         st.markdown(
             f"""
@@ -482,9 +430,7 @@ def show():
             unsafe_allow_html=True
         )
 
-        # -------------------------------------------------
         # GENERATE PDF
-        # -------------------------------------------------
 
         pdf_bytes = generate_interview_pdf(
             target_role,

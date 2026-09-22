@@ -1,16 +1,11 @@
 import json
-
 from google.genai.types import GenerateContentConfig
-
 from utils.config import client, MODEL_NAME
 from utils.prompts import RESUME_ANALYSIS_PROMPT
 import time
 
 
-def parse_resume_ai(resume_text,target_role):
-
-    
-
+def parse_resume_ai(resume_text,target_role):  
 
     print("=== GEMINI PARSER RUNNING ===")
     print(RESUME_ANALYSIS_PROMPT)
@@ -21,10 +16,13 @@ def parse_resume_ai(resume_text,target_role):
 
     prompt = RESUME_ANALYSIS_PROMPT.replace("<TARGET_ROLE>",target_role).replace(
     "<RESUME_TEXT>",
-    resume_text)
+    resume_text
+    )
 
     start=time.time()
 
+
+    #Gemini API Call
     response = client.models.generate_content(
         model=MODEL_NAME,
         contents=prompt,
@@ -39,6 +37,8 @@ def parse_resume_ai(resume_text,target_role):
  
     try:
         return json.loads(response.text)
+
+    #Error in Parsing
 
     except Exception:
 

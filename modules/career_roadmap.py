@@ -378,17 +378,10 @@ def show():
     # Target role
     # -----------------------------------------------------
 
-    target_role = st.selectbox(
-        "Choose your target role",
-        [
-            "Data Analyst",
-            "Data Scientist",
-            "Machine Learning Engineer",
-            "AI Engineer",
-            "Backend Developer",
-            "Full Stack Developer",
-            "Software Engineer"
-        ]
+    target_role = st.text_input(
+    "Enter your target role",
+    value=st.session_state.target_role,
+    placeholder="e.g., Data Scientist, Cloud Engineer, Cybersecurity Analyst"
     )
 
     # -----------------------------------------------------
@@ -439,6 +432,10 @@ def show():
         "🚀 Generate Roadmap",
         use_container_width=True
     ):
+
+     if not target_role.strip():
+        st.warning("⚠️ Please enter a target role.")
+        st.stop()
 
         with st.spinner(
             f"Creating your {duration} personalized roadmap..."

@@ -17,6 +17,7 @@ def create_vector_store(resume_text):
 
     chunks = splitter.split_text(resume_text)
 
+    #CHECK FOR BUGS
     print("Resume length:", len(resume_text))
     print("Chunks created:", len(chunks))
     print(chunks[:2])

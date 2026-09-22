@@ -9,8 +9,8 @@ from utils.pdf_report import generate_report
 from utils.database import save_analysis
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-UPLOAD_DIR = BASE_DIR / "uploads"
+BASE_DIR = Path(__file__).resolve().parent.parent  #project root directory
+UPLOAD_DIR = BASE_DIR / "uploads"  
 UPLOAD_DIR.mkdir(exist_ok=True)
 
 
@@ -90,16 +90,11 @@ def show():
                 
             st.success("✅ Analysis Complete!")
 
-    # -------------------------------
     # DISPLAY RESULTS
-    # -------------------------------
-
     if st.session_state.resume_data is not None:
 
         resume_data = st.session_state.resume_data
-        target_role = st.session_state.target_role
-
-        
+        target_role = st.session_state.target_role 
                             
 
         st.divider()

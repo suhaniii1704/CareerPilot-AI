@@ -4,9 +4,7 @@ from utils.database import ( init_db, create_user, authenticate_user)
 
 from modules import home,resume_analysis, interview_coach,resume_chat,job_match,career_roadmap,history
 
-# -----------------------------
 # Page Configuration
-# -----------------------------
 st.set_page_config(
     page_title="CareerPilot AI",
     page_icon="🚀",
@@ -14,11 +12,10 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-#-------------------
 #Initialize Database
-#-------------------
 init_db()
 
+# Custom CSS Styling
 st.markdown("""
 <style>
     section[data-testid="stSidebar"] {
@@ -31,9 +28,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# -----------------------------
 # Session State
-# -----------------------------
 if "page" not in st.session_state:
     st.session_state.page = "🏠 Home"
 
@@ -81,10 +76,8 @@ if "user_id" not in st.session_state:
 if "user_name" not in st.session_state:
     st.session_state.user_name = ""    
 
-# ===================================================
-# AUTHENTICATION
-# ===================================================
 
+# AUTHENTICATION
 if not st.session_state.logged_in:
 
     st.title("🔐 CareerPilot AI")
@@ -146,11 +139,8 @@ if not st.session_state.logged_in:
     st.stop()
 
 
-# -----------------------------
-# Sidebar
-# -----------------------------
 
-
+# Sidebar   
 st.sidebar.markdown(f"### 👋 {st.session_state.user_name}")
 
 st.sidebar.divider()
@@ -196,15 +186,11 @@ if st.sidebar.button("🧠 Career Roadmap",use_container_width=True):
 if st.sidebar.button("🕘 My History", use_container_width=True):
     st.session_state.page = "🕘 My History"
 
-
-
-
 if st.sidebar.button("🚪 Logout", use_container_width=True):
 
     st.session_state.logged_in = False
     st.session_state.user_id = None
     st.session_state.user_name = ""
-
     st.session_state.interview_active = False
     st.session_state.interview_history = []
     st.session_state.current_question = None
@@ -212,57 +198,35 @@ if st.sidebar.button("🚪 Logout", use_container_width=True):
 
     st.rerun()
 
+
+ #App Menu
 menu = st.session_state.page
 
-# ===================================================
-# HOME PAGE - AI CAREER DASHBOARD
-# ===================================================
 
+# HOME PAGE/AI CAREER DASHBOARD
 if menu == "🏠 Home":
-
    home.show()
 
-
-# ===================================================
 # RESUME ANALYSIS
-# ===================================================
 elif menu == "📄 Resume Analysis":
         resume_analysis.show()
-    
-
-
-                
-# ===================================================
+                  
 # RESUME CHAT
-# ===================================================
 elif menu == "💬 Resume Chat":
     resume_chat.show()
 
-
-# ===================================================
 # INTERVIEW COACH
-#===================================================
 elif menu == "🎯 Interview Coach":
     interview_coach.show()
 
-
-
-# ===================================================
 # JOB MATCH
-# ===================================================
 elif menu == "📊 Job Match":
     job_match.show()
 
-# ===================================================
 # CAREER ADVISOR
-# ===================================================
 elif menu == "🧠 Career Roadmap":
-
     career_roadmap.show()
 
-# ===================================================
 # MY HISTORY
-# ===================================================
 elif menu == "🕘 My History":
-
     history.show_history()

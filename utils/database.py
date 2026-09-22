@@ -6,9 +6,8 @@ from datetime import datetime
 DB_NAME = "careerpilot.db"
 
 
-# =====================================================
+
 # DATABASE CONNECTION
-# =====================================================
 
 def get_connection():
     return sqlite3.connect(
@@ -17,19 +16,18 @@ def get_connection():
     )
 
 
-# =====================================================
+
 # INITIALIZE DATABASE
-# =====================================================
+
 
 def init_db():
 
     conn = get_connection()
     cursor = conn.cursor()
 
-    # -------------------------------------------------
+    
     # USERS TABLE
-    # -------------------------------------------------
-
+    
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,10 +38,9 @@ def init_db():
     )
     """)
 
-    # -------------------------------------------------
+    
     # RESUME ANALYSES TABLE
-    # -------------------------------------------------
-
+    
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS analyses (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -56,10 +53,9 @@ def init_db():
     )
     """)
 
-    # -------------------------------------------------
+    
     # INTERVIEW HISTORY TABLE
-    # -------------------------------------------------
-
+    
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS interviews (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -72,9 +68,8 @@ def init_db():
     )
     """)
 
-    # -------------------------------------------------
+    
     # JOB MATCH HISTORY TABLE
-    # -------------------------------------------------
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS job_matches (
@@ -89,9 +84,8 @@ def init_db():
     )
     """)
 
-    # -------------------------------------------------
     # CAREER ROADMAP HISTORY TABLE
-    # -------------------------------------------------
+    
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS roadmaps (
@@ -110,9 +104,8 @@ def init_db():
     conn.close()
 
 
-# =====================================================
+
 # USER FUNCTIONS
-# =====================================================
 
 def create_user(name, email, password):
 
@@ -172,9 +165,8 @@ def authenticate_user(email, password):
     return user
 
 
-# =====================================================
+
 # RESUME ANALYSIS FUNCTIONS
-# =====================================================
 
 def save_analysis(user_id, target_role, resume_data):
 
@@ -274,9 +266,7 @@ def delete_analysis(user_id, analysis_id):
     conn.close()
 
 
-# =====================================================
 # INTERVIEW HISTORY FUNCTIONS
-# =====================================================
 
 def save_interview(
     user_id,
@@ -380,9 +370,7 @@ def delete_interview(user_id, interview_id):
     conn.close()
 
 
-# =====================================================
 # JOB MATCH HISTORY FUNCTIONS
-# =====================================================
 
 def save_job_match(
     user_id,
@@ -491,9 +479,7 @@ def delete_job_match(user_id, match_id):
     conn.close()
 
 
-# =====================================================
 # CAREER ROADMAP HISTORY FUNCTIONS
-# =====================================================
 
 def save_roadmap(
     user_id,

@@ -8,9 +8,7 @@ def show():
     st.title("🚀 CareerPilot AI")
     st.subheader("Your Personalized AI Career Coach")
    
-       # ===================================================
-       # IF RESUME HAS BEEN ANALYZED
-       # ===================================================
+    # IF RESUME HAS BEEN ANALYZED
    
     if st.session_state.resume_data is not None:
    
@@ -33,7 +31,7 @@ def show():
                grade = "C"
    
            # Role Match
-           role_match = min(100, ats + 5)
+           role_match = resume_data["role_match"]
    
            # Career Readiness
            career_readiness = min(100, ats - missing * 3 + 10)
@@ -60,10 +58,7 @@ def show():
    
            left, right = st.columns(2)
    
-           # ===================================================
-           # LEFT COLUMN - STRENGTHS
-           # ===================================================
-   
+           # LEFT COLUMN - STRENGTHS  
            with left:
    
                st.markdown("### 💪 Resume Strengths")
@@ -88,10 +83,7 @@ def show():
                for s in strengths:
                    st.success(f"✔ {s}")
    
-           # ===================================================
-           # RIGHT COLUMN - IMPROVEMENTS
-           # ===================================================
-   
+           # RIGHT COLUMN - IMPROVEMENTS   
            with right:
    
                st.markdown("### ⚠ Areas to Improve")
@@ -109,20 +101,12 @@ def show():
    
            st.divider()
    
-           # ===================================================
-           # RECOMMENDED ROLES
-           # ===================================================
-   
+           # RECOMMENDED ROLES   
            st.markdown("### 🎯 Recommended Roles")
    
            role_cols = st.columns(4)
    
-           recommended = [
-               target_role or "Data Analyst",
-               "Business Analyst",
-               "ML Intern",
-               "AI Engineer Intern"
-           ]
+           recommended =resume_data["recommended_roles"]
    
            for col, role in zip(role_cols, recommended):
                with col:
@@ -130,16 +114,13 @@ def show():
    
            st.divider()
    
-           # ===================================================
-           # NEXT SKILLS
-           # ===================================================
-   
+           # NEXT SKILLS   
            st.markdown("### 📚 Recommended Next Skills")
    
            next_skills = (
                resume_data["missing_skills"][:5]
                if resume_data["missing_skills"]
-               else ["Tableau", "Docker", "Azure"]
+               else [""]
            )
    
            skill_cols = st.columns(len(next_skills))
@@ -157,10 +138,7 @@ def show():
    
            st.divider()
    
-           # ===================================================
-           # CAREER READINESS
-           # ===================================================
-   
+           # CAREER READINESS   
            st.markdown("### 📈 Career Readiness")
    
            st.progress(career_readiness / 100)
@@ -170,9 +148,8 @@ def show():
    
            
    
-       # ===================================================
-       # BEFORE RESUME ANALYSIS
-       # ===================================================
+       
+    # BEFORE RESUME ANALYSIS
    
     else:
    
